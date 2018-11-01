@@ -21,6 +21,8 @@ cd ~
 cp weights/weights/VGG_ILSVRC_16_layers_fc_reduced.h5 ssd/ssd_keras/VGG_ILSVRC_16_layers_fc_reduced.h5
 sudo easy_install bs4
 cd ssd/ssd_keras/dataset_download
+sudo curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
+sudo chmod a+rx /usr/local/bin/youtube-dl
 youtube-dl https://drive.google.com/open?id=1tfBFavijh4UTG4cGqIKwhcklLXUDuY0D
 unzip udacity_driving_datasets.zip-1tfBFavijh4UTG4cGqIKwhcklLXUDuY0D.zip -d ../dataset
 sudo wget https://raw.githubusercontent.com/wookayin/gpustat/v0.3.2/gpustat.py -O /usr/bin/gpustat
