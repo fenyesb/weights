@@ -18,7 +18,7 @@ mkdir weights
 cd weights
 git clone https://github.com/fenyesb/weights
 cd ~
-cp weights/weights/VGG_ILSVRC_16_layers_fc_reduced.h5 ssd/ssd_keras/VGG_ILSVRC_16_layers_fc_reduced.h5
+#cp weights/weights/VGG_ILSVRC_16_layers_fc_reduced.h5 ssd/ssd_keras/VGG_ILSVRC_16_layers_fc_reduced.h5
 sudo easy_install bs4
 cd ssd/ssd_keras/dataset_download
 sudo curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
@@ -31,8 +31,10 @@ sudo chmod +x /usr/bin/gpustat
 #watch --color -n1.0 gpustat -c -p
 cd ssd_keras
 cd dataset_download
-youtube-dl https://drive.google.com/open?id=1HLVgsZQWLsfHy3q3sMaFuBn-OPrz8bCV
-youtube-dl https://drive.google.com/open?id=1LDeNXRSoS5fuPBo2SNxIvRimkvz2JRow
-unzip ships_tiny_dataset.zip-1HLVgsZQWLsfHy3q3sMaFuBn-OPrz8bCV.zip -d ../datasets/ships_tiny_dataset
-unzip ships_reduced_dataset.zip-1LDeNXRSoS5fuPBo2SNxIvRimkvz2JRow.zip -d ../datasets/ships_reduced_dataset
+#youtube-dl https://drive.google.com/open?id=1HLVgsZQWLsfHy3q3sMaFuBn-OPrz8bCV
+#youtube-dl https://drive.google.com/open?id=1LDeNXRSoS5fuPBo2SNxIvRimkvz2JRow
+youtube-dl https://drive.google.com/open?id=13K_6xqvZ7ExLC3ywdLGaAvKwjhegLEHv
+#unzip ships_tiny_dataset.zip-1HLVgsZQWLsfHy3q3sMaFuBn-OPrz8bCV.zip -d ../datasets/ships_tiny_dataset
+#unzip ships_reduced_dataset.zip-1LDeNXRSoS5fuPBo2SNxIvRimkvz2JRow.zip -d ../datasets/ships_reduced_dataset
+unzip "reduced_dateset_ships_only (1).zip-13K_6xqvZ7ExLC3ywdLGaAvKwjhegLEHv.zip" -d ../datasets/ships_reduced_dataset_ships_only
 cd ..

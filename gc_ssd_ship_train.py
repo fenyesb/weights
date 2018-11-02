@@ -79,110 +79,45 @@ val_dataset = DataGenerator(load_images_into_memory=False, hdf5_dataset_path=Non
 
 # TODO: Set the paths to your dataset here.
 
-dataset_id = "reduced"
-
 # Images
-images_dir = 'datasets/ships_' + dataset_id + '_dataset/'
+images_dir = 'datasets/ships_reduced_dataset_ships_only/'
 
 # Ground truth
-train_labels_filename = images_dir + "train_10000_bb.csv"
-val_labels_filename   = images_dir + "val_5000_bb.csv"
+train_labels_filename = images_dir + "boundingbox_train.csv"
+val_labels_filename   = images_dir + "boundingbox_val.csv"
 
-train_dataset.parse_csv(images_dir=images_dir + "train_images/",
+train_dataset.parse_csv(images_dir=images_dir + "images_train/",
                         labels_filename=train_labels_filename,
                         input_format=['image_name', 'xmin', 'xmax', 'ymin', 'ymax', 'class_id'], # This is the order of the first six columns in the CSV file that contains the labels for your dataset. If your labels are in XML format, maybe the XML parser will be helpful, check the documentation.
                         include_classes='all')
 
-val_dataset.parse_csv(images_dir=images_dir + "validation_images/",
+val_dataset.parse_csv(images_dir=images_dir + "images_val/",
                       labels_filename=val_labels_filename,
                       input_format=['image_name', 'xmin', 'xmax', 'ymin', 'ymax', 'class_id'],
                       include_classes='all')
-
+					  
 # Optional: Convert the dataset into an HDF5 dataset. This will require more disk space, but will
 # speed up the training. Doing this is not relevant in case you activated the `load_images_into_memory`
 # option in the constructor, because in that cas the images are in memory already anyway. If you don't
 # want to create HDF5 datasets, comment out the subsequent two function calls.
 
-train_dataset.create_hdf5_dataset(file_path='ships_tiny_train.h5',
+train_dataset.create_hdf5_dataset(file_path='ships_train.h5',
                                   resize=False,
                                   variable_image_size=True,
                                   verbose=True)
 
-val_dataset.create_hdf5_dataset(file_path='ships_tiny_val.h5',
+val_dataset.create_hdf5_dataset(file_path='ships_val.h5',
                                 resize=False,
                                 variable_image_size=True,
                                 verbose=True)
-
+								
 # Get the number of samples in the training and validations datasets.
 train_dataset_size = train_dataset.get_dataset_size()
 val_dataset_size   = val_dataset.get_dataset_size()
 
 print("Number of images in the training dataset:\t{:>6}".format(train_dataset_size))
 print("Number of images in the validation dataset:\t{:>6}".format(val_dataset_size))
-
-# 3: Set the batch size.
-
-batch_size = 16
-
-# 4: Define the image processing chain.
-
-data_augmentation_chain = DataAugmentationConstantInputSize(random_brightness=(-48, 48, 0.5),
-                                                            random_contrast=(0.5, 1.8, 0.5),
-                                                            random_saturation=(0.5, 1.8, 0.5),
-                                                            random_hue=(18, 0.5),
-                                                            random_flip=0.5,
-                                                            random_translate=((0.03,0.5), (0.03,0.5), 0.5),
-                                                            random_scale=(0.5, 2.0, 0.5),
-                                                            n_trials_max=3,
-                                                            clip_boxes=True,
-                                                            overlap_criterion='area',
-                                                            bounds_box_filter=(0.3, 1.0),
-                                                            bounds_validator=(0.5, 1.0),
-                                                            n_boxes_min=1,
-                                                            background=(0,0,0))
-
-# 5: Instantiate an encoder that can encode ground truth labels into the format needed by the SSD loss function.
-
-# The encoder constructor needs the spatial dimensions of the model's predictor layers to create the anchor boxes.
-predictor_sizes = [model.get_layer('classes4').output_shape[1:3],
-                   model.get_layer('classes5').output_shape[1:3],
-                   model.get_layer('classes6').output_shape[1:3],
-                   model.get_layer('classes7').output_shape[1:3]]
-
-ssd_input_encoder = SSDInputEncoder(img_height=img_height,
-                                    img_width=img_width,
-                                    n_classes=n_classes,
-                                    predictor_sizes=predictor_sizes,
-                                    scales=scales,
-                                    aspect_ratios_global=aspect_ratios,
-                                    two_boxes_for_ar1=two_boxes_for_ar1,
-                                    steps=steps,
-                                    offsets=offsets,
-                                    clip_boxes=clip_boxes,
-                                    variances=variances,
-                                    matching_type='multi',
-                                    pos_iou_threshold=0.5,
-                                    neg_iou_limit=0.3,
-                                    normalize_coords=normalize_coords)
-
-# 6: Create the generator handles that will be passed to Keras' `fit_generator()` function.
-
-train_generator = train_dataset.generate(batch_size=batch_size,
-                                         shuffle=True,
-                                         transformations=[data_augmentation_chain],
-                                         label_encoder=ssd_input_encoder,
-                                         returns={'processed_images',
-                                                  'encoded_labels'},
-                                         keep_images_without_gt=False)
-
-val_generator = val_dataset.generate(batch_size=batch_size,
-                                     shuffle=False,
-                                     transformations=[],
-                                     label_encoder=ssd_input_encoder,
-                                     returns={'processed_images',
-                                              'encoded_labels'},
-                                     keep_images_without_gt=False)
-									 
+					 
 # 3: Set the batch size.
 
 batch_size = 16
@@ -283,7 +218,7 @@ callbacks = [model_checkpoint,
 # TODO: Set the epochs to train for.
 # If you're resuming a previous training, set `initial_epoch` and `final_epoch` accordingly.
 initial_epoch   = 0
-final_epoch     = 100
+final_epoch     = 3
 steps_per_epoch = 20
 
 history = model.fit_generator(generator=train_generator,
