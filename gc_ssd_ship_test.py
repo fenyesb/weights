@@ -37,7 +37,7 @@ variances = [1.0, 1.0, 1.0, 1.0] # The list of variances by which the encoded ta
 normalize_coords = True # Whether or not the model is supposed to use coordinates relative to the image size
 
 # TODO: Set the path to the `.h5` file of the model to be loaded.
-model_path = 'ssd7_trained.h5'
+model_path = 'ssd7_weights_ships.h5'
 
 # We need to create an SSDLoss object in order to pass that to the model loader.
 ssd_loss = SSDLoss(neg_pos_ratio=3, alpha=1.0)
@@ -58,7 +58,7 @@ test_dataset = DataGenerator(load_images_into_memory=False, hdf5_dataset_path=No
 # TODO: Set the paths to your dataset here.
 
 # Images
-images_dir = 'datasets/ships_reduced_dataset_ships_only'
+images_dir = 'datasets/ships_reduced_dataset_ships_only/'
 
 # Ground truth
 test_labels_filename   = images_dir + "boundingbox_test.csv"
@@ -79,14 +79,14 @@ test_dataset.create_hdf5_dataset(file_path='ships_test.h5',
                                 verbose=True)
 
 # Get the number of samples in the training and validations datasets.
-test_dataset_size   = val_dataset.get_dataset_size()
+test_dataset_size   = test_dataset.get_dataset_size()
 
 print("Number of images in the test dataset:\t{:>6}".format(test_dataset_size))
 
 
 # 1: Set the generator for the predictions.
 
-predict_generator = val_dataset.generate(batch_size=1,
+predict_generator = test_dataset.generate(batch_size=1,
                                          shuffle=True,
                                          transformations=[],
                                          label_encoder=None,
@@ -100,18 +100,17 @@ predict_generator = val_dataset.generate(batch_size=1,
 batch_images, batch_labels, batch_filenames = next(predict_generator)
 
 for i in range(5):#len(batch_filenames)): # Which batch item to look at
-
 	print("Image:", batch_filenames[i])
 	print()
 	print("Ground truth boxes:\n")
 	print(batch_labels[i])
-
+	
 	# 3: Make a prediction
-
+	
 	y_pred = model.predict(batch_images)
-
+	
 	# 4: Decode the raw prediction `y_pred`
-
+	
 	y_pred_decoded = decode_detections(y_pred,
 									   confidence_thresh=0.5,
 									   iou_threshold=0.45,
@@ -119,8 +118,9 @@ for i in range(5):#len(batch_filenames)): # Which batch item to look at
 									   normalize_coords=normalize_coords,
 									   img_height=img_height,
 									   img_width=img_width)
-
+	
 	np.set_printoptions(precision=2, suppress=True, linewidth=90)
 	print("Predicted boxes:\n")
 	print('   class   conf xmin   ymin   xmax   ymax')
 	print(y_pred_decoded[i])
+

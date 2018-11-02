@@ -17,6 +17,7 @@ cd ~
 mkdir weights
 cd weights
 git clone https://github.com/fenyesb/weights
+cp "ssd7_epoch-20_loss-1.9502_val_loss-2.1368.h5" ~/ssd/ssd_keras/ssd7_weights_ships.h5
 cd ~
 #cp weights/weights/VGG_ILSVRC_16_layers_fc_reduced.h5 ssd/ssd_keras/VGG_ILSVRC_16_layers_fc_reduced.h5
 sudo easy_install bs4
@@ -29,8 +30,7 @@ sudo chmod a+rx /usr/local/bin/youtube-dl
 sudo wget https://raw.githubusercontent.com/wookayin/gpustat/v0.3.2/gpustat.py -O /usr/bin/gpustat
 sudo chmod +x /usr/bin/gpustat
 #watch --color -n1.0 gpustat -c -p
-cd ssd_keras
-cd dataset_download
+cd ~/ssd/ssd_keras/dataset_download
 #youtube-dl https://drive.google.com/open?id=1HLVgsZQWLsfHy3q3sMaFuBn-OPrz8bCV
 #youtube-dl https://drive.google.com/open?id=1LDeNXRSoS5fuPBo2SNxIvRimkvz2JRow
 youtube-dl https://drive.google.com/open?id=13K_6xqvZ7ExLC3ywdLGaAvKwjhegLEHv
