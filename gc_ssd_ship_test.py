@@ -37,7 +37,7 @@ variances = [1.0, 1.0, 1.0, 1.0] # The list of variances by which the encoded ta
 normalize_coords = True # Whether or not the model is supposed to use coordinates relative to the image size
 
 # TODO: Set the path to the `.h5` file of the model to be loaded.
-model_path = 'ssd7_weights_ships.h5'
+model_path = 'ssd7_epoch-95_loss-2.5588_val_loss-2.5395.h5'
 
 # We need to create an SSDLoss object in order to pass that to the model loader.
 ssd_loss = SSDLoss(neg_pos_ratio=3, alpha=1.0)
@@ -51,7 +51,7 @@ model = load_model(model_path, custom_objects={'AnchorBoxes': AnchorBoxes,
 
 # Optional: If you have enough memory, consider loading the images into memory for the reasons explained above.
 
-test_dataset = DataGenerator(load_images_into_memory=False, hdf5_dataset_path=None)
+test_dataset = DataGenerator(load_images_into_memory=True, hdf5_dataset_path=None)
 
 # 2: Parse the image and label lists for the training and validation datasets.
 
@@ -73,10 +73,10 @@ test_dataset.parse_csv(images_dir=images_dir + "images_test/",
 # option in the constructor, because in that cas the images are in memory already anyway. If you don't
 # want to create HDF5 datasets, comment out the subsequent two function calls.
 
-test_dataset.create_hdf5_dataset(file_path='ships_test.h5',
-                                resize=False,
-                                variable_image_size=True,
-                                verbose=True)
+# test_dataset.create_hdf5_dataset(file_path='ships_test.h5',
+                                # resize=False,
+                                # variable_image_size=True,
+                                # verbose=True)
 
 # Get the number of samples in the training and validations datasets.
 test_dataset_size   = test_dataset.get_dataset_size()
@@ -86,41 +86,45 @@ print("Number of images in the test dataset:\t{:>6}".format(test_dataset_size))
 
 # 1: Set the generator for the predictions.
 
-predict_generator = test_dataset.generate(batch_size=1,
+predict_generator = test_dataset.generate(batch_size=20,
                                          shuffle=True,
                                          transformations=[],
                                          label_encoder=None,
                                          returns={'processed_images',
                                                   'processed_labels',
                                                   'filenames'},
-                                         keep_images_without_gt=False)
+                                         keep_images_without_gt=False,
+										 degenerate_box_handling="warn")
 										 
 # 2: Generate samples
 
 batch_images, batch_labels, batch_filenames = next(predict_generator)
+	
+# 3: Make a prediction
 
-for i in range(5):#len(batch_filenames)): # Which batch item to look at
+y_pred = model.predict(batch_images)
+
+# 4: Decode the raw prediction `y_pred`
+import time
+
+y_pred_decoded = decode_detections(y_pred,
+								   confidence_thresh=0.3,
+								   iou_threshold=0.45,
+								   top_k=200,
+								   normalize_coords=normalize_coords,
+								   img_height=img_height,
+								   img_width=img_width)
+
+for i in range(len(batch_images)): # Which batch item to look at
 	print("Image:", batch_filenames[i])
 	print()
 	print("Ground truth boxes:\n")
 	print(batch_labels[i])
 	
-	# 3: Make a prediction
-	
-	y_pred = model.predict(batch_images)
-	
-	# 4: Decode the raw prediction `y_pred`
-	
-	y_pred_decoded = decode_detections(y_pred,
-									   confidence_thresh=0.5,
-									   iou_threshold=0.45,
-									   top_k=200,
-									   normalize_coords=normalize_coords,
-									   img_height=img_height,
-									   img_width=img_width)
-	
 	np.set_printoptions(precision=2, suppress=True, linewidth=90)
 	print("Predicted boxes:\n")
 	print('   class   conf xmin   ymin   xmax   ymax')
 	print(y_pred_decoded[i])
+	time.sleep(1)
+
 

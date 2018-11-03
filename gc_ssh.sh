@@ -17,7 +17,7 @@ cd ~
 mkdir weights
 cd weights
 git clone https://github.com/fenyesb/weights
-cp "ssd7_epoch-20_loss-1.9502_val_loss-2.1368.h5" ~/ssd/ssd_keras/ssd7_weights_ships.h5
+cp ~/weights/weights/ssd7_epoch-20_loss-1.9502_val_loss-2.1368.h5 ~/ssd/ssd_keras/ssd7_weights_ships.h5
 cd ~
 #cp weights/weights/VGG_ILSVRC_16_layers_fc_reduced.h5 ssd/ssd_keras/VGG_ILSVRC_16_layers_fc_reduced.h5
 sudo easy_install bs4
@@ -33,8 +33,8 @@ sudo chmod +x /usr/bin/gpustat
 cd ~/ssd/ssd_keras/dataset_download
 #youtube-dl https://drive.google.com/open?id=1HLVgsZQWLsfHy3q3sMaFuBn-OPrz8bCV
 #youtube-dl https://drive.google.com/open?id=1LDeNXRSoS5fuPBo2SNxIvRimkvz2JRow
-youtube-dl https://drive.google.com/open?id=13K_6xqvZ7ExLC3ywdLGaAvKwjhegLEHv
+youtube-dl https://drive.google.com/file/d/1M-FEiGk2pOnywluBCP2e46I2rR6ivfAn/
 #unzip ships_tiny_dataset.zip-1HLVgsZQWLsfHy3q3sMaFuBn-OPrz8bCV.zip -d ../datasets/ships_tiny_dataset
 #unzip ships_reduced_dataset.zip-1LDeNXRSoS5fuPBo2SNxIvRimkvz2JRow.zip -d ../datasets/ships_reduced_dataset
-unzip "reduced_dateset_ships_only (1).zip-13K_6xqvZ7ExLC3ywdLGaAvKwjhegLEHv.zip" -d ../datasets/ships_reduced_dataset_ships_only
+unzip "reduced_dateset_ships_only (1).zip-1M-FEiGk2pOnywluBCP2e46I2rR6ivfAn.zip" -d ../datasets/ships_reduced_dataset_ships_only
 cd ..
